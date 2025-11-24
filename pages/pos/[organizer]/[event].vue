@@ -73,6 +73,26 @@
       </div>
     </div>
 
+    <div v-if="showSuccessModal" class="modal-overlay">
+      <div class="modal-content card success-modal">
+        <div class="success-icon">
+          ✓
+        </div>
+        <h2>Order Successful!</h2>
+        <p class="order-code">Order Code: {{ lastOrder?.code }}</p>
+        <p class="order-total">Total: {{ lastOrder ? formatPrice(lastOrder.total) : '' }}</p>
+        
+        <div class="modal-actions">
+          <button class="btn btn-primary btn-lg" @click="printTickets">
+            Print Tickets
+          </button>
+          <button class="btn btn-secondary btn-lg" @click="closeSuccessModal">
+            New Order
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="loading" class="loading">
       <p>Loading tickets...</p>
     </div>
@@ -261,10 +281,19 @@ const selectedVariations = ref<Record<number, number | null>>({})
 const processing = ref(false)
 const lastOrder = ref<any>(null)
 const showOrdersModal = ref(false)
+const showSuccessModal = ref(false)
 const loadingOrders = ref(false)
 const pastOrders = ref<any[]>([])
 const currentPage = ref(1)
 const hasNextPage = ref(false)
+
+const closeSuccessModal = () => {
+  showSuccessModal.value = false
+  lastOrder.value = null
+  purchaserEmail.value = ''
+  purchaserName.value = ''
+  purchaserPhone.value = ''
+}
 
 const loadOrders = async (page = 1) => {
   loadingOrders.value = true
@@ -530,8 +559,8 @@ const processSale = async () => {
     lastOrder.value = confirmedOrder
     clearCart()
 
-    // Show success message
-    alert(`Order ${confirmedOrder.code} created and paid successfully!`)
+    // Show success modal
+    showSuccessModal.value = true
   } catch (err: any) {
     error.value = err.message || 'Failed to process sale'
     alert(`Error: ${error.value}`)
@@ -800,6 +829,40 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.success-modal {
+  text-align: center;
+  max-width: 500px;
+}
+
+.success-icon {
+  font-size: 64px;
+  color: #10b981;
+  margin-bottom: 16px;
+}
+
+.order-code {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 16px 0;
+}
+
+.order-total {
+  font-size: 20px;
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-lg {
+  padding: 12px 24px;
+  font-size: 18px;
 }
 
 .cart-actions .btn {
