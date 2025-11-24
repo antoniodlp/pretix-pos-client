@@ -8,37 +8,22 @@
     </div>
 
     <EventSelector
-      v-if="apiUrl && apiToken"
-      :api-url="apiUrl"
-      :api-token="apiToken"
+      v-if="pretix.apiUrl.value && pretix.apiToken.value"
+      :api-url="pretix.apiUrl.value"
+      :api-token="pretix.apiToken.value"
       @event-selected="handleEventSelected"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 
-const apiUrl = ref('')
-const apiToken = ref('')
-
-const loadConfig = () => {
-  if (typeof window !== 'undefined') {
-    apiUrl.value = localStorage.getItem('pretix_api_url') || ''
-    apiToken.value = localStorage.getItem('pretix_api_token') || ''
-
-    if (!apiUrl.value || !apiToken.value) {
-      navigateTo('/')
-    }
-  }
-}
+const pretix = usePretix()
 
 const logout = () => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('pretix_api_url')
-    localStorage.removeItem('pretix_api_token')
-    navigateTo('/')
-  }
+  pretix.setConfig('', '')
+  navigateTo('/')
 }
 
 const handleEventSelected = (event: any) => {
@@ -46,7 +31,9 @@ const handleEventSelected = (event: any) => {
 }
 
 onMounted(() => {
-  loadConfig()
+  if (!pretix.apiUrl.value || !pretix.apiToken.value) {
+    navigateTo('/')
+  }
 })
 </script>
 

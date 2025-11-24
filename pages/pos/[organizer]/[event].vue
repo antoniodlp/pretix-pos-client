@@ -363,20 +363,13 @@ const isValidPurchaser = computed(() => {
   return purchaserEmail.value && purchaserName.value && purchaserPhone.value
 })
 
-const loadConfig = () => {
-  if (typeof window !== 'undefined') {
-    const apiUrl = localStorage.getItem('pretix_api_url') || ''
-    const apiToken = localStorage.getItem('pretix_api_token') || ''
-    pretix.setConfig(apiUrl, apiToken)
-  }
-}
+
 
 const loadTickets = async () => {
   loading.value = true
   error.value = ''
 
   try {
-    loadConfig()
     const [eventDetails, items, quotasData] = await Promise.all([
       pretix.getEvent(organizer, event),
       pretix.getEventItems(organizer, event),
@@ -532,8 +525,6 @@ const processSale = async () => {
   error.value = ''
 
   try {
-    loadConfig()
-
     const positions = cart.value.map((item) => ({
       item: item.itemId,
       variation: item.variationId,

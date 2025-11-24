@@ -43,12 +43,25 @@ export interface PretixQuota {
 }
 
 export const usePretix = () => {
-  const apiUrl = ref('')
-  const apiToken = ref('')
+  const apiUrl = useState<string>('pretix_api_url', () => '')
+  const apiToken = useState<string>('pretix_api_token', () => '')
+
+  // Initialize from localStorage on client side
+  if (typeof window !== 'undefined' && !apiUrl.value) {
+    const savedUrl = localStorage.getItem('pretix_api_url')
+    const savedToken = localStorage.getItem('pretix_api_token')
+    if (savedUrl) apiUrl.value = savedUrl
+    if (savedToken) apiToken.value = savedToken
+  }
 
   const setConfig = (url: string, token: string) => {
     apiUrl.value = url
     apiToken.value = token
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pretix_api_url', url)
+      localStorage.setItem('pretix_api_token', token)
+    }
   }
 
   const getHeaders = () => ({
@@ -322,6 +335,8 @@ export const usePretix = () => {
 
   return {
     setConfig,
+    apiUrl,
+    apiToken,
     searchEvents,
     getEvent,
     getEventItems,

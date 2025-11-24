@@ -36,32 +36,23 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
+const pretix = usePretix()
 const apiUrl = ref('')
 const apiToken = ref('')
 
 const connect = () => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('pretix_api_url', apiUrl.value)
-    localStorage.setItem('pretix_api_token', apiToken.value)
-    navigateTo('/events')
-  }
-}
-
-const loadConfig = () => {
-  if (typeof window !== 'undefined') {
-    const savedUrl = localStorage.getItem('pretix_api_url')
-    const savedToken = localStorage.getItem('pretix_api_token')
-    
-    if (savedUrl && savedToken) {
-      apiUrl.value = savedUrl
-      apiToken.value = savedToken
-      navigateTo('/events')
-    }
-  }
+  pretix.setConfig(apiUrl.value, apiToken.value)
+  navigateTo('/events')
 }
 
 onMounted(() => {
-  loadConfig()
+  if (pretix.apiUrl.value && pretix.apiToken.value) {
+    navigateTo('/events')
+  } else {
+    // Initialize inputs if global state has values (e.g. from localStorage but not both set?)
+    apiUrl.value = pretix.apiUrl.value
+    apiToken.value = pretix.apiToken.value
+  }
 })
 </script>
 
