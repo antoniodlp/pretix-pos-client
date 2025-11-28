@@ -104,7 +104,7 @@ npm run generate
 ### First-Time Setup
 
 1. Open the application in your browser
-2. Enter your Pretix API URL (e.g., `https://tickets.eventriva.com`)
+2. Enter your Pretix API URL (e.g., `https://tickets.test.com`)
 3. Enter your API token
 4. Click "Connect"
 
