@@ -182,6 +182,7 @@ If you cannot connect to the API:
 1. Verify the API URL is correct (include `https://` and no trailing slash)
 2. Check that your API token has the required permissions
 3. Ensure your Pretix instance is accessible from your network
+4. Make sure the CORS settings in your Pretix instance allow requests from your POS client
 
 ### Ticket Printing Issues
 
@@ -192,7 +193,9 @@ If tickets won't print:
 
 ## License
 
-[Add your license information here]
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+This license is compatible with [Pretix](https://pretix.eu/), which is also licensed under Apache 2.0.
 
 ## Support
 
