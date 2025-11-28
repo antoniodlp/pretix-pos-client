@@ -21,6 +21,8 @@ export interface PretixItem {
   available_from?: string | null
   available_until?: string | null
   variations?: PretixVariation[]
+  all_sales_channels: boolean
+  limit_sales_channels: string[]
 }
 
 export interface PretixVariation {
@@ -149,7 +151,21 @@ export const usePretix = () => {
           headers: getHeaders()
         }
       )
-      return response.data.results.filter((item: PretixItem) => item.active)
+      return response.data.results.filter((item: PretixItem) => {
+        const now = new Date()
+        const availableFrom = item.available_from ? new Date(item.available_from) : null
+        const availableUntil = item.available_until ? new Date(item.available_until) : null
+
+        const isAvailable =
+          (!availableFrom || now >= availableFrom) &&
+          (!availableUntil || now <= availableUntil)
+
+        const isChannelAvailable =
+          item.all_sales_channels ||
+          (item.limit_sales_channels && item.limit_sales_channels.includes('api.pos'))
+
+        return item.active && isChannelAvailable && isAvailable
+      })
     } catch (error: any) {
       throw new Error(`Failed to fetch items: ${error.message}`)
     }
@@ -348,4 +364,3 @@ export const usePretix = () => {
     getOrders
   }
 }
-
