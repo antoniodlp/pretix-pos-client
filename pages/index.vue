@@ -34,6 +34,10 @@
 </template>
 
 <script setup lang="ts">
+useHead({
+  title: 'Box Office'
+})
+
 import { ref, onMounted } from 'vue'
 
 const pretix = usePretix()

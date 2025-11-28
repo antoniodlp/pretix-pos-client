@@ -104,7 +104,6 @@
 
     <div v-else class="pos-layout">
       <div class="tickets-section">
-        <h2>Available Tickets</h2>
         <div v-if="tickets.length === 0" class="card">
           <p>No tickets available for this event.</p>
         </div>
@@ -277,6 +276,11 @@ const quotas = ref<PretixQuota[]>([])
 const loading = ref(true)
 const error = ref('')
 const eventName = ref('')
+
+useHead({
+  title: computed(() => eventName.value ? `Box Office: ${eventName.value}` : 'Box Office')
+})
+
 const selectedVariations = ref<Record<number, number | null>>({})
 const processing = ref(false)
 const lastOrder = ref<any>(null)

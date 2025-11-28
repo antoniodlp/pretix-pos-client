@@ -17,7 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+useHead({
+  title: 'Box Office'
+})
 
 const pretix = usePretix()
 
