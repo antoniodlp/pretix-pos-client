@@ -1,97 +1,201 @@
 # Pretix POS Client
 
-A Nuxt 3 Vue.js Point of Sale (POS) client for Pretix event management system. This application allows you to connect to a Pretix instance, search for events, view available tickets, and process sales with ticket printing capabilities.
+A modern Point of Sale (POS) interface for [Pretix](https://pretix.eu/), built with Nuxt.js and Vue 3. This application provides a streamlined interface for selling tickets and managing orders at physical event locations.
 
 ## Features
 
-- 🔌 Connect to Pretix API with configurable URL and token
-- 🔍 Search and select events by name
-- 🎫 View available tickets with pricing and variations
-- 🛒 Shopping cart functionality with quantity management
-- 💳 Process sales and create orders in Pretix
-- 🖨️ Print tickets after successful sale
-- 📱 Responsive design for desktop and tablet use
+- **Event Selection**: Browse and select from live events across multiple organizers
+- **Item Management**: Display active items filtered by sales channel and availability dates
+- **Shopping Cart**: Add items with variations, adjust quantities, and manage cart contents
+- **Order Processing**: Create orders with purchaser details and mark them as paid
+- **Ticket Printing**: Download and print official Pretix ticket PDFs with QR codes
+- **Order History**: View past orders and reprint tickets as needed
+- **Persistent Configuration**: API credentials are saved locally for convenience
 
-## Setup
+## Prerequisites
 
-1. Install dependencies:
+- Node.js (v16 or higher recommended)
+- npm or yarn package manager
+- A Pretix instance with API access
+- Pretix API token with appropriate permissions
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd pretix-pos-client
+```
+
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+## Configuration
+
+### Pretix API Setup
+
+1. Log in to your Pretix instance
+2. Navigate to **Settings** → **API** → **API Tokens**
+3. Create a new API token with the following permissions:
+   - View events
+   - View items
+   - View quotas
+   - Create orders
+   - View orders
+   - Modify orders
+
+### Creating the api.pos Sales Channel
+
+Before configuring items, you need to create the `api.pos` sales channel in Pretix:
+
+1. Log in to your Pretix instance
+2. Navigate to **Organizer Settings** → **Sales channels**
+3. Click **Create a new sales channel**
+4. Fill in the following:
+   - **Identifier**: `api.pos` (must be exactly this)
+   - **Label**: `POS` or `Point of Sale` (can be anything descriptive)
+   - **Type**: Select `API`
+5. Click **Save**
+
+### Sales Channel Configuration
+
+For items to appear in the POS, ensure they are configured correctly in Pretix:
+
+1. Go to **Products** → **Items** → Select an item
+2. Navigate to the **Availability** tab
+3. Either:
+   - Check "Available in all sales channels" (item will appear everywhere), OR
+   - Uncheck "Available in all sales channels" and select `api.pos` in "Limit to sales channels"
+
+## Running the Application
+
+### Development Mode
+
+Start the development server:
 ```bash
 npm run dev
 ```
 
-3. Open your browser and navigate to `http://localhost:3000`
+The application will be available at `http://localhost:3000`
 
-## Configuration
+### Production Build
 
-1. On the home page, enter your Pretix API URL (e.g., `https://pretix.example.com`)
-2. Enter your Pretix API token
-3. The configuration is saved in your browser's localStorage
+Build the application for production:
+```bash
+npm run build
+```
+
+Preview the production build:
+```bash
+npm run preview
+```
+
+### Static Generation
+
+Generate a static version of the application:
+```bash
+npm run generate
+```
 
 ## Usage
 
-1. **Configure API**: Enter your Pretix API URL and token on the home page
-2. **Search Events**: Type an event name and click "Search" to find events
-3. **Select Event**: Click on an event from the search results
-4. **View Tickets**: Browse available tickets for the selected event
-5. **Add to Cart**: Click "Add to Cart" on tickets you want to sell
-6. **Manage Cart**: Adjust quantities or remove items from the cart
-7. **Complete Sale**: Click "Complete Sale" to process the order
-8. **Print Tickets**: After a successful sale, click "Print Tickets" to print the order
+### First-Time Setup
 
-## API Requirements
+1. Open the application in your browser
+2. Enter your Pretix API URL (e.g., `https://tickets.eventriva.com`)
+3. Enter your API token
+4. Click "Connect"
 
-This application requires a Pretix instance with API access. You'll need:
-- A Pretix organizer account
-- An API token with appropriate permissions (read events, create orders, confirm orders)
+> **Note**: Your API credentials are stored in your browser's local storage and will persist across sessions. This means you won't need to re-enter them unless you clear your browser data or use a different browser/device.
+
+### Selling Tickets
+
+1. Select an event from the events list
+2. Browse available items and add them to the cart
+3. For items with variations, select the appropriate variation before adding
+4. Adjust quantities as needed using the +/- buttons
+5. Enter purchaser details (email, name, phone)
+6. Click "Complete Sale" to process the order
+7. Print tickets using the "Print Tickets" button
+
+> **Note**: All orders created through this POS are automatically assigned to the `api.pos` sales channel in Pretix.
+
+### Viewing Past Orders
+
+1. Click the "Past Orders" button in the POS header
+2. Browse orders with pagination
+3. Click "Reprint" on any order to download and print tickets again
+
+## Item Filtering
+
+The POS automatically filters items based on:
+
+- **Active Status**: Only active items are shown
+- **Sales Channel**: Items must be available on the `api.pos` channel or all channels
+- **Availability Dates**: Items outside their `available_from` and `available_until` window are hidden
+
+## Technology Stack
+
+- **Framework**: Nuxt.js 3.8
+- **UI Library**: Vue 3 with Composition API
+- **HTTP Client**: Axios
+- **Utilities**: VueUse
+- **Styling**: Custom CSS
 
 ## Project Structure
 
 ```
+pretix-pos-client/
 ├── assets/
 │   └── css/
 │       └── main.css          # Global styles
 ├── components/
-│   └── EventSelector.vue     # Event search and selection component
+│   └── EventSelector.vue     # Event selection component
 ├── composables/
-│   └── usePretix.ts          # Pretix API integration
+│   └── usePretix.ts         # Pretix API integration
 ├── pages/
-│   ├── index.vue             # Home page with API configuration
+│   ├── index.vue            # API configuration page
+│   ├── events.vue           # Event selection page
 │   └── pos/
 │       └── [organizer]/
-│           └── [event].vue   # POS interface page
-└── nuxt.config.ts            # Nuxt configuration
+│           └── [event].vue  # Main POS interface
+├── public/
+│   └── favicon.ico          # Application favicon
+├── nuxt.config.ts           # Nuxt configuration
+└── package.json             # Project dependencies
 ```
 
-## Technologies
+## Troubleshooting
 
-- **Nuxt 3** - Vue.js framework
-- **Vue 3** - Progressive JavaScript framework
-- **TypeScript** - Type safety
-- **Axios** - HTTP client for API requests
-- **VueUse** - Vue composition utilities
+### Items Not Appearing
 
-## Development
+If items are not showing in the POS:
+1. Verify the item is marked as "Active" in Pretix
+2. Check the sales channel configuration (see Configuration section)
+3. Ensure the current date is within the item's availability window
 
-```bash
-# Development server
-npm run dev
+### API Connection Issues
 
-# Build for production
-npm run build
+If you cannot connect to the API:
+1. Verify the API URL is correct (include `https://` and no trailing slash)
+2. Check that your API token has the required permissions
+3. Ensure your Pretix instance is accessible from your network
 
-# Preview production build
-npm run preview
-```
+### Ticket Printing Issues
 
-## Notes
+If tickets won't print:
+1. Allow popups in your browser for this application
+2. Wait a few seconds after order creation for PDF generation
+3. Check that the order was successfully marked as paid
 
-- The application stores API credentials in localStorage
-- Ticket availability is checked against Pretix quotas
-- Orders are automatically confirmed after creation
-- Printing opens a new window with formatted ticket content
+## License
 
+[Add your license information here]
+
+## Support
+
+For issues related to:
+- **This POS client**: [Add your support contact/repository issues link]
+- **Pretix itself**: Visit [pretix.eu](https://pretix.eu/) or their documentation
