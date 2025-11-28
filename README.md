@@ -197,5 +197,5 @@ If tickets won't print:
 ## Support
 
 For issues related to:
-- **This POS client**: [Add your support contact/repository issues link]
+- **This POS client**: [https://github.com/antoniodlp/pretix-pos-client/issues](https://github.com/antoniodlp/pretix-pos-client/issues)
 - **Pretix itself**: Visit [pretix.eu](https://pretix.eu/) or their documentation
